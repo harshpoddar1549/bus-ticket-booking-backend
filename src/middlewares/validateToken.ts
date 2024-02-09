@@ -12,6 +12,7 @@ export const validateToken = async (req: Request, res: Response, next:NextFuncti
                 res.status(401).json({
                     message:"User is not Authorized"
                 })
+                return
             }
             next()
         })

@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import busModel from "../models/bus.model"
 import { BusService } from "../services/bus.service"
+
 export const BusController = {
 
     createBus: async (req: Request, res: Response) => {
@@ -55,7 +56,5 @@ export const BusController = {
             console.log(err)
             res.status(400).json(err)
         }    
-    },
-
-    //viewAllOpenTickets: 
+    }
 }

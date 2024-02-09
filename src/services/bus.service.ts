@@ -1,6 +1,11 @@
 //import { Request, Response } from "express"
 import busModel from "../models/bus.model"
 
+type InputBus = {
+    "busNumber": String
+    "seats" : String[]
+}
+
 export const BusService = {
     fetchAllBuses : async () => {
         try{
@@ -32,5 +37,8 @@ export const BusService = {
                 return err
             }
         }
+    },
+    createBus: async (bus:InputBus) => {
+        return await busModel.create(bus)
     }
 }

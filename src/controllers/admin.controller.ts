@@ -1,9 +1,9 @@
 import { Request, Response } from "express"
-import busModel from "../models/bus.model"
-import bookingModel from "../models/booking.model"
 import adminModel from "../models/admin.model";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { resetBus, resetPlatform } from "../utils/utils";
+import { AdminService } from "../services/admin.service";
 
 export const adminController = {
     registerAdmin: async (req:Request, res:Response) => {
@@ -46,7 +46,7 @@ export const adminController = {
             //throw new Error()
             return
         }
-        const user = await adminModel.findOne({email})
+        const user = await AdminService.getByEmail(email) //adminModel.findOne({email})
         // compare password with hashed password
         if(user && (await bcrypt.compare(password, user.password))){
             // if this is try we need to provide an access token in the response
@@ -88,29 +88,4 @@ export const adminController = {
             res.status(400).send(`Invalid Request`)
         }
     }
-}
-
-const resetBus = async (busNumber: String) => {
-    const bus = await busModel.findOne({busNumber:busNumber})
-    if(bus){
-        const bookings = bus.bookings
-        bus.bookings = []
-        const updatedBus = await bus.save()
-        await bookingModel.deleteMany({busId:bus._id})
-        return updatedBus
-    }
-    return false
-}
-
-const resetPlatform = async () => {
-    const buses = await busModel.find()
-    let updatedBusArr = []
-    let updatedBus
-    for (const bus of buses){
-        bus.bookings = []
-        updatedBus = await bus.save()
-        updatedBusArr.push(updatedBus)
-    }
-    await bookingModel.deleteMany()
-    return updatedBusArr
 }

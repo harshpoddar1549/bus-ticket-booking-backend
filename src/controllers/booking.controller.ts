@@ -1,6 +1,7 @@
 import bookingModel from "../models/booking.model"
 import busModel from "../models/bus.model"
 import { Request, Response } from "express"
+import { findOpenTicketsForABus } from "../utils/utils"
 
 
 export const bookingController = {
@@ -175,32 +176,3 @@ export const bookingController = {
 }
 
 
-
-const findOpenTicketsForABus = async (busNumber:String) => {
-    try{
-        const bus = await busModel.findOne({busNumber: busNumber})
-        if(bus){
-            const allBookings = await bookingModel.find({busId: bus._id})
-            const allSeats = bus.seats
-            const closedSeat:String[] = []
-            for (const booking of allBookings){
-                closedSeat.push(booking.seatNumber)
-            }
-            const openSeats:String[] = []
-            for (const seat of allSeats){
-                if(!closedSeat.includes(seat)){
-                    openSeats.push(seat)
-                }
-            }
-            return {
-                openSeats: openSeats,
-                closedSeats: closedSeat,
-                busNumber: bus.busNumber
-            }
-        }
-        return {}
-    }catch(err){
-        console.log(err)
-        return
-    }
-}
